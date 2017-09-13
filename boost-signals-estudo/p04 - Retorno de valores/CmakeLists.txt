@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 2.8)
+project(return-values-signal)
+
+SET (BOOST_LIBRARY_DIR "C:/boost_1_64_0/stage/lib")
+SET (BOOST_INCLUDE_DIR "C:/boost_1_64_0")
+
+file(GLOB my_source_files "*.h" "*.cpp")
+
+add_executable(returnVal ${my_source_files})
+include_directories(${BOOST_INCLUDE_DIR})
+
+target_link_libraries(returnVal "C:/boost_1_64_0/stage/lib/libboost_system-vc120-mt-gd-1_64.lib")
+target_link_libraries(returnVal "C:/boost_1_64_0/stage/lib/libboost_date_time-vc120-mt-gd-1_64.lib")
+target_link_libraries(returnVal "C:/boost_1_64_0/stage/lib/libboost_regex-vc120-mt-gd-1_64.lib")
+target_link_libraries(returnVal "C:/boost_1_64_0/stage/lib/libboost_regex-vc120-mt-gd-1_64.lib")
+target_link_libraries(returnVal "C:/boost_1_64_0/stage/lib/libboost_signals-vc120-mt-gd-1_64.lib")
+
