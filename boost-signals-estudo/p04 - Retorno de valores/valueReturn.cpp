@@ -1,41 +1,45 @@
+//http://www.boost.org/doc/libs/1_54_0/doc/html/signals2/tutorial.html#idp164790912
 #include <boost\signals2.hpp>//O header da boost. Esse header precisa que sua lib seja inclusa.
+#include <boost\lexical_cast.hpp>
 #include <iostream>
-//Essa classe trata dois signals
+#include <memory>
+#include <iostream>
+using boost::lexical_cast;
+//Um objetozinho que será usado como retorno.
+class ResultData
+{
+private:
+public:
+	const std::string testData;
+
+	ResultData(std::string str) :testData(str){
+
+	}
+};
+
+//A classe do slot
 class Bagulho{
 private:
 	const int id;
 public:
 	Bagulho(int i) : id(i){
 	}
-	//Tratando um tipo de signal
-	void operator()(){
-		std::cout << "Slot tipo 1" <<" bagulho id = "<<id<< std::endl;
-	}
-	//Tratando outro tipo de signal
-	void operator()(int x){
-		std::cout << "Slot tipo 2, param = "<<x <<" bagulho id = "<<id<< std::endl;
+	std::shared_ptr<ResultData> operator()(std::string param)
+	{
+		std::shared_ptr<ResultData> myData = std::make_shared<ResultData>(param + " " + lexical_cast<std::string>(id));
+		return myData;
 	}
 };
+
 int main(int argc, char** argv){
-	//Dois tipos de sinal
-	boost::signals2::signal<void()> sinalTipo1;
-	boost::signals2::signal<void(int)> sinalTipo2;
-	Bagulho *bagulho0 = new Bagulho(0);
-	Bagulho *bagulho1 = new Bagulho(1);
-	Bagulho *bagulho2 = new Bagulho(2);
-	//Conecta os slots
-	//Não posso passar o ponteiro mas sim a referência para o valor apontado pelo ponteiro, então uma dereferência basta.
-	sinalTipo1.connect(2,*bagulho0);
-	sinalTipo2.connect(2,*bagulho0);
-
-	sinalTipo1.connect(0,*bagulho1);
-	sinalTipo2.connect(0,*bagulho1);
-
-	sinalTipo1.connect(1, *bagulho2);
-	sinalTipo2.connect(2, *bagulho2);
-	//Chama.
-	sinalTipo1();
-	sinalTipo2(10);
+	//Cria o sinal que retorna o objeto do tipo result data
+	boost::signals2::signal<std::shared_ptr<ResultData>(std::string)> mySignal;
+	//Cria o slot e liga ao sinal
+	std::shared_ptr<Bagulho> mySlot = std::make_shared<Bagulho>(0);
+	mySignal.connect(*mySlot);
+	//Chama o sinal e pega o resultado.
+	std::shared_ptr<ResultData> resultFromSlot = *mySignal("Vamos Flamengo");
+	std::cout << resultFromSlot->testData << std::endl;
 	return 0;
 }
 
