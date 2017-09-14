@@ -9,6 +9,7 @@
 #include "shaderUtils.h"
 #include <map>
 #include "rendering3d.h"
+#include "loadDicom.h"
 const std::string imagePath = GetExecutablePath();
 const int screenWidth = 300;
 const int screenHeight = 300;
@@ -18,10 +19,7 @@ int main(int argc, char** argv)
 	try
 	{
 		//1) Carga da imagem
-		ImageLoaderType::Pointer imageLoader = ImageLoaderType::New();
-		imageLoader->SetFileName(imagePath + "phantom.png");
-		imageLoader->Update();
-		ImageType::Pointer originalImage = imageLoader->GetOutput();
+		Short3DImageType::Pointer originalImage = loadDicom("C:\\meus dicoms\\pe-feet-first");
 
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
@@ -71,12 +69,12 @@ int main(int argc, char** argv)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			if (!isInitialized)
 			{
-				obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", originalImage);
+				//obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", originalImage);
 				isInitialized = true;
 			}
 			else
 			{
-				obj->Render();
+				//obj->Render();
 			}
 			glfwPollEvents();
 			glfwSwapBuffers(window);
