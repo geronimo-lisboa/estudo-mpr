@@ -16,13 +16,13 @@ target_link_libraries(mpr   ${ITK_LIBRARIES})
 find_package(OpenGL)
 target_link_libraries(mpr ${OPENGL_LIBRARIES})
 #Adds GLEW
-include_directories(C:/lib/glew-2.0.0/include)
-target_link_libraries(mpr C:/lib/glew-2.0.0/lib/Release/x64/glew32.lib)
+include_directories(C:/libs/glew-2.0.0/include)
+target_link_libraries(mpr C:/libs/glew-2.0.0/lib/Release/Win32/glew32.lib)
 
 #Adds GLFW
-include_directories(C:/lib/glfw/include)
-target_link_libraries(mpr debug C:/lib/glfw_build/src/Debug/glfw3.lib)
-target_link_libraries(mpr optimized C:/lib/glfw_build/src/Release/glfw3.lib)
+include_directories(C:/libs/glfw/include)
+target_link_libraries(mpr debug C:/libs/glfw_bin/src/Debug/glfw3.lib)
+target_link_libraries(mpr optimized C:/libs/glfw_bin/src/Release/glfw3.lib)
 
 #boost.org
 SET (BOOST_INCLUDE_DIR "C:/boost_1_64_0")
