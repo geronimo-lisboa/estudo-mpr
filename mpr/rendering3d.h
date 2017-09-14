@@ -42,8 +42,8 @@ private:
 	vector<GLfloat> vertexes;
 	vector<GLfloat> colors;
 	vector<GLfloat> texCoords;
-	itk::Image<float, 2>::Pointer image;
+	itk::Image<short, 3>::Pointer image;
 public:
-	Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 2>::Pointer imagem);
+	Object3d(std::string vsfile, std::string fsfile, itk::Image<short, 3>::Pointer imagem);
 	void Render();
 };

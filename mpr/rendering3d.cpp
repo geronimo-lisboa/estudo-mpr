@@ -161,25 +161,33 @@ void Shader::UseProgram()
 	glUseProgram(this->programId);
 }
 
-Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 2>::Pointer imagem) : shader(vsfile, fsfile)
+Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<short, 3>::Pointer imagem) : shader(vsfile, fsfile)
 {
 	glDisable(GL_CULL_FACE);
 	this->image = imagem;
 	//Criação da textura
 	texture = 0;
 	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imagem->GetLargestPossibleRegion().GetSize()[0], 
-		imagem->GetLargestPossibleRegion().GetSize()[1], 0, GL_RED, GL_FLOAT, imagem->GetBufferPointer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_3D, texture);
+	glTexImage3D(GL_TEXTURE_3D,
+				0,
+				GL_RED,
+				imagem->GetLargestPossibleRegion().GetSize()[0],
+				imagem->GetLargestPossibleRegion().GetSize()[1],
+				imagem->GetLargestPossibleRegion().GetSize()[2],
+				0,
+				GL_RED,
+				GL_SHORT,
+				imagem->GetBufferPointer());
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 
 	vertexes.push_back(-1.0f); vertexes.push_back(-1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(1.0f); vertexes.push_back(-1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(-1.0f); vertexes.push_back(1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(1.0f); vertexes.push_back(1.0f); vertexes.push_back(0.0f);
-	
+
 	//cores triangulo 1
 	colors.push_back(1.0f); colors.push_back(0.0f); colors.push_back(0.0f);
 	colors.push_back(0.0f); colors.push_back(1.0f); colors.push_back(0.0f);
@@ -187,10 +195,10 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 2>:
 	colors.push_back(0.0f); colors.push_back(0.1f); colors.push_back(0.0f);
 
 	//TexCoord triangulo 1
-	texCoords.push_back(0.0f); texCoords.push_back(0.0f);
-	texCoords.push_back(0.0f); texCoords.push_back(1.0f);
-	texCoords.push_back(1.0f); texCoords.push_back(0.0f);
-	texCoords.push_back(1.0f); texCoords.push_back(1.0f);
+	texCoords.push_back(0.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);
+	texCoords.push_back(0.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);
+	texCoords.push_back(1.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);
+	texCoords.push_back(1.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);
 
 	vertexesVbo = 0;//Cria o buffer dos vertices e passa os dados pra ele.
 	glGenBuffers(1, &vertexesVbo);
@@ -225,7 +233,7 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 2>:
 	glBindBuffer(GL_ARRAY_BUFFER, colorsVbo);
 	glVertexAttribPointer(vcLocation, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glBindBuffer(GL_ARRAY_BUFFER, texVbo);
-	glVertexAttribPointer(uvLocation, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glVertexAttribPointer(uvLocation, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 }
 
@@ -244,7 +252,7 @@ void Object3d::Render()
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);
-	glBindTexture(GL_TEXTURE_2D, texture); 		
+	glBindTexture(GL_TEXTURE_3D, texture);
 
 	glBindAttribLocation(shader.GetProgramId(), vpLocation, "vp");
 	glBindAttribLocation(shader.GetProgramId(), vcLocation, "vc");

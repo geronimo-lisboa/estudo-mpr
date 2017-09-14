@@ -1,10 +1,10 @@
 #version 400
 in vec3 outColor;
-in vec2 textureCoords;
+in vec3 textureCoords;
  
 out vec4 frag_colour;
 
-uniform sampler2D myTextureSampler;
+uniform sampler3D myTextureSampler;
 uniform bool useTexture;
 
 void main() {
