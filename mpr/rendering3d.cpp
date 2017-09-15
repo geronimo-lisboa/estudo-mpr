@@ -248,8 +248,12 @@ void Object3d::Render()
 	GLuint uvLocation = shader.GetAttribute("uv");
 	GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
 	GLuint useTextureLocation = shader.GetUniform("useTexture");
+	GLuint windowLevelLocation = shader.GetUniform("windowLevel");
+	GLuint windowWidthLocation = shader.GetUniform("windowWidth");
 
 	glUniform1i(useTextureLocation, true);//Flag de controle no shader
+	glUniform1f(windowLevelLocation, 1500);
+	glUniform1f(windowWidthLocation, 1000);
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);
