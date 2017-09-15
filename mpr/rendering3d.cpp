@@ -205,10 +205,10 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 	colors.push_back(0.0f); colors.push_back(0.0f); colors.push_back(1.0f);
 	colors.push_back(0.0f); colors.push_back(0.1f); colors.push_back(0.0f);
 	//TexCoord triangulo 1
-	texCoords.push_back(0.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);//vert 0,0
-	texCoords.push_back(0.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);//vert 1.0
-	texCoords.push_back(1.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);//vert 0,1
-	texCoords.push_back(1.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);//vert 1,1
+	texCoords.push_back(0.0f); texCoords.push_back(0.0f); texCoords.push_back(0.0f);//vert 0,0
+	texCoords.push_back(0.0f); texCoords.push_back(1.0f); texCoords.push_back(0.0f);//vert 1.0
+	texCoords.push_back(1.0f); texCoords.push_back(0.0f); texCoords.push_back(0.0f);//vert 0,1
+	texCoords.push_back(1.0f); texCoords.push_back(1.0f); texCoords.push_back(0.0f);//vert 1,1
 	vertexesVbo = 0;//Cria o buffer dos vertices e passa os dados pra ele.
 	glGenBuffers(1, &vertexesVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexesVbo);
