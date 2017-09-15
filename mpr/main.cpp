@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				//obj->Render();
+				obj->Render();
 			}
 			glfwPollEvents();
 			glfwSwapBuffers(window);

@@ -248,7 +248,7 @@ void Object3d::Render()
 	GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
 	GLuint useTextureLocation = shader.GetUniform("useTexture");
 
-	glUniform1i(useTextureLocation, true);//Flag de controle no shader
+	glUniform1i(useTextureLocation, false);//Flag de controle no shader
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);
