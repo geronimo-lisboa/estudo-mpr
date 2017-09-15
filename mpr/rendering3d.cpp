@@ -161,12 +161,13 @@ void Shader::UseProgram()
 	glUseProgram(this->programId);
 }
 
-Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<short, 3>::Pointer imagem) : shader(vsfile, fsfile)
+Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>::Pointer imagem) : shader(vsfile, fsfile)
 {
 	glDisable(GL_CULL_FACE);
 	this->image = imagem;
 	//Criação da textura
 	texture = 0;
+
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_3D, texture);
 	glTexImage3D(GL_TEXTURE_3D,
@@ -177,7 +178,7 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<short, 3>:
 				imagem->GetLargestPossibleRegion().GetSize()[2],
 				0,
 				GL_RED,
-				GL_SHORT,
+				GL_FLOAT,
 				imagem->GetBufferPointer());
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -248,7 +249,7 @@ void Object3d::Render()
 	GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
 	GLuint useTextureLocation = shader.GetUniform("useTexture");
 
-	glUniform1i(useTextureLocation, false);//Flag de controle no shader
+	glUniform1i(useTextureLocation, true);//Flag de controle no shader
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);

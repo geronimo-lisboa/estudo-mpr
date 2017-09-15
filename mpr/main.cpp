@@ -12,15 +12,15 @@
 #include "loadDicom.h"
 const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
 ;
-const int screenWidth = 300;
-const int screenHeight = 300;
+const int screenWidth = 800;
+const int screenHeight = 800;
 
 int main(int argc, char** argv)
 {
 	try
 	{
 		//1) Carga da imagem
-		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\pe-feet-first");
+		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\Marching Man");
 
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
@@ -35,6 +35,7 @@ int main(int argc, char** argv)
 		//OpenGL 3.2
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		window = glfwCreateWindow(screenWidth, screenHeight, "BOA NOITE CARALHO", NULL, NULL);//A criação da janela é aqui
 		if (!window)//Se falhou em criar a janela, morre.
 		{

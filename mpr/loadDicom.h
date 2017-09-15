@@ -7,7 +7,7 @@
 #include <itkCommand.h>
 
 //Typedefs
-typedef itk::Image<short, 3> Short3DImageType;
+typedef itk::Image<float, 3> Short3DImageType;
 typedef itk::ImageSeriesReader<Short3DImageType> Reader3dType;
 typedef itk::GDCMImageIO ImageIOType;
 typedef itk::GDCMSeriesFileNames NamesGeneratorType;
