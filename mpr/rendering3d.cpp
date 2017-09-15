@@ -172,7 +172,7 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 	glBindTexture(GL_TEXTURE_3D, texture);
 	glTexImage3D(GL_TEXTURE_3D,
 				0,
-				GL_RED,
+				GL_R16F,
 				imagem->GetLargestPossibleRegion().GetSize()[0],
 				imagem->GetLargestPossibleRegion().GetSize()[1],
 				imagem->GetLargestPossibleRegion().GetSize()[2],

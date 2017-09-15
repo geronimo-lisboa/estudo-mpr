@@ -10,7 +10,9 @@ uniform bool useTexture;
 void main() {
   if(useTexture) 
   {
-     frag_colour = texture( myTextureSampler, textureCoords );
+	 float scalar = texture( myTextureSampler, textureCoords )[0];
+	 if (scalar < 1200) scalar = 0;
+     frag_colour = vec4(scalar, 0, 0, 1);
   }
   else
   {
