@@ -10,7 +10,8 @@
 #include <map>
 #include "rendering3d.h"
 #include "loadDicom.h"
-const std::string imagePath = GetExecutablePath();
+const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
+;
 const int screenWidth = 300;
 const int screenHeight = 300;
 
@@ -19,7 +20,7 @@ int main(int argc, char** argv)
 	try
 	{
 		//1) Carga da imagem
-		Short3DImageType::Pointer originalImage = loadDicom("C:\\meus dicoms\\pe-feet-first");
+		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\pe-feet-first");
 
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
