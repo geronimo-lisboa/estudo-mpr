@@ -29,6 +29,10 @@ SET (BOOST_INCLUDE_DIR "C:/boost_1_64_0")
 include_directories(${BOOST_INCLUDE_DIR})
 target_link_libraries(mpr "C:/boost_1_64_0/stage/win32/lib/libboost_signals-vc120-mt-1_64.lib")
 
+#Eigen
+set (EIGEN_INCLUDE_DIR "C:/eigen")
+include_directories(${EIGEN_INCLUDE_DIR})
+
 #suprime o warning chato dos infernos que a ITK gera por usar funções inseguras da api do windows
 add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 
