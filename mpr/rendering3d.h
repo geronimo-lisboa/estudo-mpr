@@ -5,7 +5,10 @@
 #include <string>
 #include <map>
 #include <itkImage.h>
+#include <Eigen/Geometry>
 using namespace std;
+using namespace Eigen;
+
 class Shader
 {
 private:
@@ -43,6 +46,7 @@ private:
 	vector<GLfloat> colors;
 	vector<GLfloat> texCoords;
 	itk::Image<float, 3>::Pointer image;
+	Vector3f planeNormal;
 public:
 	Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>::Pointer imagem);
 	void Render();

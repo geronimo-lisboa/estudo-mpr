@@ -7,11 +7,17 @@ out vec4 frag_colour;
 uniform sampler3D myTextureSampler;
 uniform bool useTexture;
 
+uniform float windowLevel;
+uniform float windowWidth;
+
 void main() {
   if(useTexture) 
   {
 	 float scalar = texture( myTextureSampler, textureCoords )[0];
-	 if (scalar < 1200) scalar = 0;
+	 float _lowerVal = windowLevel - (windowWidth/2);
+	 float _upperVal = windowLevel + (windowWidth/2);
+	 scalar = scalar - _lowerVal;
+	 scalar = scalar / (_upperVal - _lowerVal);
      frag_colour = vec4(scalar, 0, 0, 1);
   }
   else

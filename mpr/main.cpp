@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	try
 	{
 		//1) Carga da imagem
-		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\Marching Man");
+		Short3DImageType::Pointer originalImage = loadDicom("C:\\meus dicoms\\Marching Man");
 		//Experiencia pra fazer o resize
 		// Resize
 		Short3DImageType::SizeType inputSize = originalImage->GetLargestPossibleRegion().GetSize();

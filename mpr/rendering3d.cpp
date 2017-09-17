@@ -160,14 +160,16 @@ void Shader::UseProgram()
 {
 	glUseProgram(this->programId);
 }
-
+///-------------------------------------------------------------------------------------------------------------------
 Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>::Pointer imagem) : shader(vsfile, fsfile)
 {
+	//Seta a normal inicial.
+	planeNormal << 0, 1, 0;
+	//Criação da parte 3d.
 	glDisable(GL_CULL_FACE);
 	this->image = imagem;
 	//Criação da textura
 	texture = 0;
-
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_3D, texture);
 	glTexImage3D(GL_TEXTURE_3D,
@@ -183,43 +185,45 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+
+
 
 	vertexes.push_back(-1.0f); vertexes.push_back(-1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(1.0f); vertexes.push_back(-1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(-1.0f); vertexes.push_back(1.0f); vertexes.push_back(0.0f);
 	vertexes.push_back(1.0f); vertexes.push_back(1.0f); vertexes.push_back(0.0f);
-
 	//cores triangulo 1
 	colors.push_back(1.0f); colors.push_back(0.0f); colors.push_back(0.0f);
 	colors.push_back(0.0f); colors.push_back(1.0f); colors.push_back(0.0f);
 	colors.push_back(0.0f); colors.push_back(0.0f); colors.push_back(1.0f);
 	colors.push_back(0.0f); colors.push_back(0.1f); colors.push_back(0.0f);
-
 	//TexCoord triangulo 1
-	texCoords.push_back(0.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);
-	texCoords.push_back(0.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);
-	texCoords.push_back(1.0f); texCoords.push_back(0.0f); texCoords.push_back(0.5f);
-	texCoords.push_back(1.0f); texCoords.push_back(1.0f); texCoords.push_back(0.5f);
-
+	texCoords.push_back(0.0f); texCoords.push_back(0.0f); texCoords.push_back(0.0f);//vert 0,0
+	texCoords.push_back(0.0f); texCoords.push_back(1.0f); texCoords.push_back(0.0f);//vert 1.0
+	texCoords.push_back(1.0f); texCoords.push_back(0.0f); texCoords.push_back(0.0f);//vert 0,1
+	texCoords.push_back(1.0f); texCoords.push_back(1.0f); texCoords.push_back(0.0f);//vert 1,1
 	vertexesVbo = 0;//Cria o buffer dos vertices e passa os dados pra ele.
 	glGenBuffers(1, &vertexesVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexesVbo);
 	glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float), vertexes.data(), GL_STATIC_DRAW);
-
 	colorsVbo = 0;
 	glGenBuffers(1, &colorsVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, colorsVbo);
 	glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), colors.data(), GL_STATIC_DRAW);
-
 	texVbo = 0;
 	glGenBuffers(1, &texVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, texVbo);
 	glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
-
 	vao = 0;//Cria o vertex array object e liga o buffer a ele
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-
 	shader.UseProgram();
 	GLuint vpLocation = shader.GetAttribute("vp");
 	GLuint vcLocation = shader.GetAttribute("vc");
@@ -228,7 +232,6 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 	glEnableVertexAttribArray(vcLocation);
 	glEnableVertexAttribArray(uvLocation);
 	glUseProgram(0);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertexesVbo);
 	glVertexAttribPointer(vpLocation, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glBindBuffer(GL_ARRAY_BUFFER, colorsVbo);
@@ -240,6 +243,11 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 
 void Object3d::Render()
 {
+	Vector3f ang01; ang01 << 0, 1, 0;
+	Vector3f ang02; ang02 << 0.866, 0.5, 0;
+	Matrix3f mat01 = AngleAxisf(((90 * 3.14) / 180), ang01).matrix();
+	Matrix3f mat02 = AngleAxisf(((90 * 3.14) / 180), ang02).matrix();
+
 
 	shader.UseProgram();
 	glBindVertexArray(vao);
@@ -248,8 +256,12 @@ void Object3d::Render()
 	GLuint uvLocation = shader.GetAttribute("uv");
 	GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
 	GLuint useTextureLocation = shader.GetUniform("useTexture");
+	GLuint windowLevelLocation = shader.GetUniform("windowLevel");
+	GLuint windowWidthLocation = shader.GetUniform("windowWidth");
 
 	glUniform1i(useTextureLocation, true);//Flag de controle no shader
+	glUniform1f(windowLevelLocation, 1500);
+	glUniform1f(windowWidthLocation, 1000);
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(textureSamplerLocation, 0);
