@@ -15,6 +15,13 @@
 #include <itkIdentityTransform.h>
 #include <itkImageFileWriter.h>
 
+#include <Eigen/Geometry>
+#include <vtkPlaneSource.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+#include <vtkPoints.h>
+using namespace Eigen;
+
 const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
 ;
 const int screenWidth = 800;
@@ -53,7 +60,36 @@ int main(int argc, char** argv)
 		writer->SetFileName("c:\\dicom\\teste.mha");
 		writer->Write();
 #endif
-
+		//teste, twntando calcular as texture coordinates usando a eigen
+		Matrix3f m;
+		m = AngleAxisf((30 * 3.14) / 180, Vector3f::UnitX())
+			* AngleAxisf((0 * 3.14) / 180, Vector3f::UnitY())
+			* AngleAxisf((0 * 3.14) / 180, Vector3f::UnitZ());
+		cout << m << endl << "is unitary: " << m.isUnitary() << endl;
+		Vector3f N, U, V;
+		N << 0, 1, 0;
+		U << 1, 0, 0;
+		V << 0, 0, 1;		
+		N = V.cross(U);
+		Vector3f _N, _U, _V;
+		_N << -0.866, 0.5, 0;
+		_U = _N.cross(V);
+		_V = _N.cross(U);
+		_N = _V.cross(_N);
+		//Teste, tentando calcular com a vtkPlaneSource
+		vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
+		ps->SetNormal(0.866, -0.5, 0.0);
+		ps->SetCenter(0, 0, 0);
+		//ps->SetOrigin(0, 0, 0);
+		
+		ps->Update();
+		vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
+		array<double, 3> pt0, pt1, pt2, pt3;
+		const int numP = resultingPlane->GetNumberOfPoints();
+		resultingPlane->GetPoint(0, pt0.data());
+		resultingPlane->GetPoint(1, pt1.data());
+		resultingPlane->GetPoint(2, pt2.data());
+		resultingPlane->GetPoint(3, pt3.data());
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
 		//Seta o callback de erro.
@@ -103,7 +139,7 @@ int main(int argc, char** argv)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			if (!isInitialized)
 			{
-				obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", output);
+				obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", originalImage);
 				isInitialized = true;
 			}
 			else

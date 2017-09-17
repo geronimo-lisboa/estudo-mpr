@@ -3,15 +3,20 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 project(estudo-mpr)
 
 set(ITK_DIR "C:/libs/itk/ITK_bin")
+set(VTK_DIR "C:/libs/VTK-8.0.0_bin")
 
 # Find ITK
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
+# Find VTK
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
 file(GLOB my_source_files "*.h" "*.cpp" "*.cxx")
 add_executable(mpr ${my_source_files} )  
 #bota vtk e ITK
-target_link_libraries(mpr   ${ITK_LIBRARIES})
+target_link_libraries(mpr   ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 #Adds OpenGL
 find_package(OpenGL)
 target_link_libraries(mpr ${OPENGL_LIBRARIES})
