@@ -10,6 +10,10 @@
 #include <map>
 #include "rendering3d.h"
 #include "loadDicom.h"
+
+#include <itkResampleImageFilter.h>
+#include <itkIdentityTransform.h>
+
 const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
 ;
 const int screenWidth = 800;
@@ -21,6 +25,29 @@ int main(int argc, char** argv)
 	{
 		//1) Carga da imagem
 		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\Marching Man");
+		//Experiencia pra fazer o resize
+		// Resize
+		Short3DImageType::SizeType inputSize = originalImage->GetLargestPossibleRegion().GetSize();
+		Short3DImageType::SizeType outputSize;
+		outputSize[0] = inputSize[0] / 2;
+		outputSize[1] = inputSize[1] / 2;
+		outputSize[2] = inputSize[2] / 2;
+		Short3DImageType::SpacingType outputSpacing;
+		outputSpacing[0] = originalImage->GetSpacing()[0] * 2;
+		outputSpacing[1] = originalImage->GetSpacing()[1] * 2;
+		outputSpacing[2] = originalImage->GetSpacing()[2] * 2;
+
+		typedef itk::IdentityTransform<double, 3> TransformType;
+		typedef itk::ResampleImageFilter<Short3DImageType, Short3DImageType> ResampleImageFilterType;
+		ResampleImageFilterType::Pointer resample = ResampleImageFilterType::New();
+		resample->SetInput(originalImage);
+		resample->SetSize(outputSize);
+		resample->SetOutputSpacing(outputSpacing);
+		resample->SetTransform(TransformType::New());
+		resample->UpdateLargestPossibleRegion();
+		Short3DImageType::Pointer output = resample->GetOutput();
+
+
 
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
@@ -71,7 +98,7 @@ int main(int argc, char** argv)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			if (!isInitialized)
 			{
-				obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", originalImage);
+				obj = make_shared<Object3d>(imagePath + "vertexShader.glsl", imagePath + "fragmentShader.glsl", output);
 				isInitialized = true;
 			}
 			else
