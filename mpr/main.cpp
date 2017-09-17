@@ -13,6 +13,7 @@
 
 #include <itkResampleImageFilter.h>
 #include <itkIdentityTransform.h>
+#include <itkImageFileWriter.h>
 
 const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
 ;
@@ -24,9 +25,10 @@ int main(int argc, char** argv)
 	try
 	{
 		//1) Carga da imagem
-		Short3DImageType::Pointer originalImage = loadDicom("C:\\meus dicoms\\Marching Man");
+		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\Marching Man");
 		//Experiencia pra fazer o resize
 		// Resize
+#ifdef __teste_resample
 		Short3DImageType::SizeType inputSize = originalImage->GetLargestPossibleRegion().GetSize();
 		Short3DImageType::SizeType outputSize;
 		outputSize[0] = inputSize[0] / 2;
@@ -36,18 +38,21 @@ int main(int argc, char** argv)
 		outputSpacing[0] = originalImage->GetSpacing()[0] * 2;
 		outputSpacing[1] = originalImage->GetSpacing()[1] * 2;
 		outputSpacing[2] = originalImage->GetSpacing()[2] * 2;
-
 		typedef itk::IdentityTransform<double, 3> TransformType;
 		typedef itk::ResampleImageFilter<Short3DImageType, Short3DImageType> ResampleImageFilterType;
 		ResampleImageFilterType::Pointer resample = ResampleImageFilterType::New();
+		resample->SetOutputParametersFromImage(originalImage);
 		resample->SetInput(originalImage);
 		resample->SetSize(outputSize);
 		resample->SetOutputSpacing(outputSpacing);
 		resample->SetTransform(TransformType::New());
 		resample->UpdateLargestPossibleRegion();
 		Short3DImageType::Pointer output = resample->GetOutput();
-
-
+		itk::ImageFileWriter<Short3DImageType>::Pointer writer = itk::ImageFileWriter<Short3DImageType>::New();
+		writer->SetInput(output);
+		writer->SetFileName("c:\\dicom\\teste.mha");
+		writer->Write();
+#endif
 
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
