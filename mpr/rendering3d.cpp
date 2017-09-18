@@ -248,49 +248,56 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 
 void Object3d::Render()
 {
-	shader.UseProgram();
-	glBindVertexArray(vao);
-	GLuint vpLocation = shader.GetAttribute("vp");
-	GLuint vcLocation = shader.GetAttribute("vc");
-	GLuint uvLocation = shader.GetAttribute("uv");
-	GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
-	GLuint useTextureLocation = shader.GetUniform("useTexture");
-	GLuint windowLevelLocation = shader.GetUniform("windowLevel");
-	GLuint windowWidthLocation = shader.GetUniform("windowWidth");
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glUniform1i(useTextureLocation, true);//Flag de controle no shader
-	glUniform1f(windowLevelLocation, 1500);
-	glUniform1f(windowWidthLocation, 1000);
-
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(textureSamplerLocation, 0);
-	glBindTexture(GL_TEXTURE_3D, texture);
-
-	glBindAttribLocation(shader.GetProgramId(), vpLocation, "vp");
-	glBindAttribLocation(shader.GetProgramId(), vcLocation, "vc");
-	glBindAttribLocation(shader.GetProgramId(), uvLocation, "uv");
-
-	//recalcula a tex coordinate
-	vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
-	//ps->SetNormal(0, 0.5, 0.866);
-	ps->SetNormal(planeNormal[0], planeNormal[1], planeNormal[2]);
-	ps->SetCenter(0.5, 0.5, 0.5);
-	ps->Update();
-	vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
-	array<array<double, 3>,4> pts;
-	resultingPlane->GetPoint(0, pts[0].data());
-	resultingPlane->GetPoint(1, pts[1].data());
-	resultingPlane->GetPoint(2, pts[2].data());
-	resultingPlane->GetPoint(3, pts[3].data());
-	glBindBuffer(GL_ARRAY_BUFFER, texVbo);
-	texCoords.clear();
-	for (array<double, 3> p : pts)
+	for (int i = 0; i < 25; i++)
 	{
-		texCoords.push_back(p[0]); texCoords.push_back(p[1]); texCoords.push_back(p[2]);
-	}
-	glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+		shader.UseProgram();
+		glBindVertexArray(vao);
+		GLuint vpLocation = shader.GetAttribute("vp");
+		GLuint vcLocation = shader.GetAttribute("vc");
+		GLuint uvLocation = shader.GetAttribute("uv");
+		GLuint textureSamplerLocation = shader.GetUniform("myTextureSampler");
+		GLuint useTextureLocation = shader.GetUniform("useTexture");
+		GLuint windowLevelLocation = shader.GetUniform("windowLevel");
+		GLuint windowWidthLocation = shader.GetUniform("windowWidth");
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	teste_opengl();
+		glUniform1i(useTextureLocation, true);//Flag de controle no shader
+		glUniform1f(windowLevelLocation, 1500);
+		glUniform1f(windowWidthLocation, 1000);
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(textureSamplerLocation, 0);
+		glBindTexture(GL_TEXTURE_3D, texture);
+
+		glBindAttribLocation(shader.GetProgramId(), vpLocation, "vp");
+		glBindAttribLocation(shader.GetProgramId(), vcLocation, "vc");
+		glBindAttribLocation(shader.GetProgramId(), uvLocation, "uv");
+
+		//recalcula a tex coordinate
+		vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
+		//ps->SetNormal(0, 0.5, 0.866);
+		ps->SetNormal(planeNormal[0], planeNormal[1], planeNormal[2]);
+		ps->SetCenter(0.5, 0.5, 0.5);
+		ps->Push(i*0.005);
+		ps->Update();
+		vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
+		array<array<double, 3>, 4> pts;
+		resultingPlane->GetPoint(0, pts[0].data());
+		resultingPlane->GetPoint(1, pts[1].data());
+		resultingPlane->GetPoint(2, pts[2].data());
+		resultingPlane->GetPoint(3, pts[3].data());
+		glBindBuffer(GL_ARRAY_BUFFER, texVbo);
+		texCoords.clear();
+		for (array<double, 3> p : pts)
+		{
+			texCoords.push_back(p[0]); texCoords.push_back(p[1]); texCoords.push_back(p[2]);
+		}
+		glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	}
 }
 

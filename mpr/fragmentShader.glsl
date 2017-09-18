@@ -18,7 +18,7 @@ void main() {
 	 float _upperVal = windowLevel + (windowWidth/2);
 	 scalar = scalar - _lowerVal;
 	 scalar = scalar / (_upperVal - _lowerVal);
-     frag_colour = vec4(scalar, 0, 0, 1);
+     frag_colour = vec4(scalar, scalar, scalar, scalar);
   }
   else
   {

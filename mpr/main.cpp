@@ -195,7 +195,7 @@ int main(int argc, char** argv)
 		}
 		//O makeCurrent() da glfw
 		glfwSwapInterval(1);
-		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 
 		bool isInitialized = false;
