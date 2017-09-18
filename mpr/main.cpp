@@ -23,7 +23,7 @@
 using namespace Eigen;
 
 //const std::string imagePath = "C:\\programacao\\estudo-mpr\\mpr\\"
-const std::string imagePath = "C:\\teste\mpr\\";
+const std::string imagePath = "C:\\teste\\mpr\\";
 //const std::string dicomDir = "C:\\dicom\\Marching Man";
 const std::string dicomDir = "C:\\meus dicoms\\Marching Man";
 const int screenWidth = 800;

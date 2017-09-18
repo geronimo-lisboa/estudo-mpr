@@ -4,6 +4,11 @@
 #include <iostream>
 #include <sstream>
 #include <exception>
+#include <vtkPlaneSource.h>
+#include <vtkPolyData.h>
+#include <vtkPoints.h>
+#include <vtkSmartPointer.h>
+#include <array>
 using namespace std;
 
 void teste_opengl()
@@ -185,13 +190,13 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP);
 
 
 
@@ -243,12 +248,6 @@ Object3d::Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>:
 
 void Object3d::Render()
 {
-	Vector3f ang01; ang01 << 0, 1, 0;
-	Vector3f ang02; ang02 << 0.866, 0.5, 0;
-	Matrix3f mat01 = AngleAxisf(((90 * 3.14) / 180), ang01).matrix();
-	Matrix3f mat02 = AngleAxisf(((90 * 3.14) / 180), ang02).matrix();
-
-
 	shader.UseProgram();
 	glBindVertexArray(vao);
 	GLuint vpLocation = shader.GetAttribute("vp");
@@ -270,6 +269,26 @@ void Object3d::Render()
 	glBindAttribLocation(shader.GetProgramId(), vpLocation, "vp");
 	glBindAttribLocation(shader.GetProgramId(), vcLocation, "vc");
 	glBindAttribLocation(shader.GetProgramId(), uvLocation, "uv");
+
+	//recalcula a tex coordinate
+	vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
+	ps->SetNormal(0, 0.5, 0.866);
+	ps->SetCenter(0.5, 0.5, 0.5);
+	ps->Update();
+	vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
+	array<array<double, 3>,4> pts;
+	resultingPlane->GetPoint(0, pts[0].data());
+	resultingPlane->GetPoint(1, pts[1].data());
+	resultingPlane->GetPoint(2, pts[2].data());
+	resultingPlane->GetPoint(3, pts[3].data());
+	glBindBuffer(GL_ARRAY_BUFFER, texVbo);
+	texCoords.clear();
+	for (array<double, 3> p : pts)
+	{
+		texCoords.push_back(p[0]); texCoords.push_back(p[1]); texCoords.push_back(p[2]);
+	}
+	glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	teste_opengl();
 }
