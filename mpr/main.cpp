@@ -22,8 +22,10 @@
 #include <vtkPoints.h>
 using namespace Eigen;
 
-const std::string imagePath ="C:\\programacao\\estudo-mpr\\mpr\\"
-;
+//const std::string imagePath = "C:\\programacao\\estudo-mpr\\mpr\\"
+const std::string imagePath = "C:\\teste\mpr\\";
+//const std::string dicomDir = "C:\\dicom\\Marching Man";
+const std::string dicomDir = "C:\\meus dicoms\\Marching Man";
 const int screenWidth = 800;
 const int screenHeight = 800;
 
@@ -32,7 +34,7 @@ int main(int argc, char** argv)
 	try
 	{
 		//1) Carga da imagem
-		Short3DImageType::Pointer originalImage = loadDicom("C:\\dicom\\Marching Man");
+		Short3DImageType::Pointer originalImage = loadDicom(dicomDir);
 		//Experiencia pra fazer o resize
 		// Resize
 #ifdef __teste_resample
@@ -69,27 +71,85 @@ int main(int argc, char** argv)
 		Vector3f N, U, V;
 		N << 0, 1, 0;
 		U << 1, 0, 0;
-		V << 0, 0, 1;		
+		V << 0, 0, 1;
 		N = V.cross(U);
 		Vector3f _N, _U, _V;
 		_N << -0.866, 0.5, 0;
 		_U = _N.cross(V);
 		_V = _N.cross(U);
 		_N = _V.cross(_N);
-		//Teste, tentando calcular com a vtkPlaneSource
+		//Teste, tentando calcular com a vtkPlaneSource - Com isso aqui eu estou perto de conseguir as coordenadas de textura que eu quero.
+		//Elas ainda estão entre -0.5, 0.5, mas parece que servem já.
 		vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
-		ps->SetNormal(0.866, -0.5, 0.0);
-		ps->SetCenter(0, 0, 0);
-		//ps->SetOrigin(0, 0, 0);
-		
+		ps->SetCenter(0.5, 0.5, 0.5);
 		ps->Update();
 		vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
 		array<double, 3> pt0, pt1, pt2, pt3;
-		const int numP = resultingPlane->GetNumberOfPoints();
 		resultingPlane->GetPoint(0, pt0.data());
 		resultingPlane->GetPoint(1, pt1.data());
 		resultingPlane->GetPoint(2, pt2.data());
 		resultingPlane->GetPoint(3, pt3.data());
+
+		ps->SetNormal(0.866, -0.5, 0.0);
+		ps->SetCenter(0.5, 0.5, 0.5);
+		ps->Update();
+		resultingPlane = ps->GetOutput();
+		resultingPlane->GetPoint(0, pt0.data());
+		resultingPlane->GetPoint(1, pt1.data());
+		resultingPlane->GetPoint(2, pt2.data());
+		resultingPlane->GetPoint(3, pt3.data());
+
+		/////Lá em baixo setNormal faz isso aqui:
+
+		//void vtkPlaneSource::SetNormal(double N[3])
+		//{
+		//	double n[3], rotVector[3], theta;
+		//	//make sure input is decent
+		//	n[0] = N[0];
+		//	n[1] = N[1];
+		//	n[2] = N[2];
+		//	if (vtkMath::Normalize(n) == 0.0)
+		//	{
+		//		vtkErrorMacro(<< "Specified zero normal");
+		//		return;
+		//	}
+		//	// Compute rotation vector using a transformation matrix.
+		//	// Note that if normals are parallel then the rotation is either
+		//	// 0 or 180 degrees.
+		//	double dp = vtkMath::Dot(this->Normal, n);
+		//	if (dp >= 1.0)
+		//	{
+		//		return; //zero rotation
+		//	}
+		//	else if (dp <= -1.0)
+		//	{
+		//		theta = 180.0;
+		//		rotVector[0] = this->Point1[0] - this->Origin[0];
+		//		rotVector[1] = this->Point1[1] - this->Origin[1];
+		//		rotVector[2] = this->Point1[2] - this->Origin[2];
+		//	}
+		//	else
+		//	{
+		//		vtkMath::Cross(this->Normal, n, rotVector);
+		//		theta = vtkMath::DegreesFromRadians(acos(dp));
+		//	}
+		//	// create rotation matrix
+		//	vtkTransform *transform = vtkTransform::New();
+		//	transform->PostMultiply();
+		//	transform->Translate(-this->Center[0], -this->Center[1], -this->Center[2]);
+		//	transform->RotateWXYZ(theta, rotVector[0], rotVector[1], rotVector[2]);
+		//	transform->Translate(this->Center[0], this->Center[1], this->Center[2]);
+		//	// transform the three defining points
+		//	transform->TransformPoint(this->Origin, this->Origin);
+		//	transform->TransformPoint(this->Point1, this->Point1);
+		//	transform->TransformPoint(this->Point2, this->Point2);
+		//	this->Normal[0] = n[0]; this->Normal[1] = n[1]; this->Normal[2] = n[2];
+		//	this->Modified();
+		//	transform->Delete();
+		//}
+
+
+
 		//2)Criação da janela/contexto/blablabla da glfw.
 		GLFWwindow* window;
 		//Seta o callback de erro.
