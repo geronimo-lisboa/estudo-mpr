@@ -272,7 +272,8 @@ void Object3d::Render()
 
 	//recalcula a tex coordinate
 	vtkSmartPointer<vtkPlaneSource> ps = vtkSmartPointer<vtkPlaneSource>::New();
-	ps->SetNormal(0, 0.5, 0.866);
+	//ps->SetNormal(0, 0.5, 0.866);
+	ps->SetNormal(planeNormal[0], planeNormal[1], planeNormal[2]);
 	ps->SetCenter(0.5, 0.5, 0.5);
 	ps->Update();
 	vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();

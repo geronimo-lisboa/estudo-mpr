@@ -46,8 +46,9 @@ private:
 	vector<GLfloat> colors;
 	vector<GLfloat> texCoords;
 	itk::Image<float, 3>::Pointer image;
-	Vector3f planeNormal;
+
 public:
+	Vector3f planeNormal;
 	Object3d(std::string vsfile, std::string fsfile, itk::Image<float, 3>::Pointer imagem);
 	void Render();
 };

@@ -28,6 +28,8 @@ const std::string imagePath = "C:\\teste\\mpr\\";
 const std::string dicomDir = "C:\\meus dicoms\\Marching Man";
 const int screenWidth = 800;
 const int screenHeight = 800;
+shared_ptr<Object3d> obj = nullptr;
+double ang = 0.0;
 
 int main(int argc, char** argv)
 {
@@ -175,6 +177,9 @@ int main(int argc, char** argv)
 		{
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)//Esc = encerra o programa.
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
+			array<double, 3> n = { { 0, std::cos(ang), std::sin(ang) } };
+			obj->planeNormal << n[0], n[1], n[2];
+			ang = ang + 0.1;
 		});
 		glfwMakeContextCurrent(window);
 		// start GLEW extension handler
@@ -192,7 +197,7 @@ int main(int argc, char** argv)
 		glfwSwapInterval(1);
 		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
-		shared_ptr<Object3d> obj = nullptr;
+
 		bool isInitialized = false;
 		while (!glfwWindowShouldClose(window))
 		{
