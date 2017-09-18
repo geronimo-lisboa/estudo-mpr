@@ -251,7 +251,7 @@ void Object3d::Render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	for (int i = 0; i < 25; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		shader.UseProgram();
 		glBindVertexArray(vao);
@@ -264,7 +264,7 @@ void Object3d::Render()
 		GLuint windowWidthLocation = shader.GetUniform("windowWidth");
 
 		glUniform1i(useTextureLocation, true);//Flag de controle no shader
-		glUniform1f(windowLevelLocation, 1500);
+		glUniform1f(windowLevelLocation, 300);
 		glUniform1f(windowWidthLocation, 1000);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -280,7 +280,7 @@ void Object3d::Render()
 		//ps->SetNormal(0, 0.5, 0.866);
 		ps->SetNormal(planeNormal[0], planeNormal[1], planeNormal[2]);
 		ps->SetCenter(0.5, 0.5, 0.5);
-		ps->Push(i*0.005);
+		ps->Push(i*0.0099);
 		ps->Update();
 		vtkSmartPointer<vtkPolyData> resultingPlane = ps->GetOutput();
 		array<array<double, 3>, 4> pts;
