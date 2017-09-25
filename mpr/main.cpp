@@ -25,9 +25,9 @@ using namespace Eigen;
 //const std::string imagePath = "C:\\programacao\\estudo-mpr\\mpr\\"
 const std::string imagePath = "C:\\teste\\mpr\\";
 //const std::string dicomDir = "C:\\dicom\\Marching Man";
-//const std::string dicomDir = "C:\\meus dicoms\\Marching Man";
+const std::string dicomDir = "C:\\meus dicoms\\Marching Man";
 //C:\meus dicoms\Visible Human Male CT DICOM
-const std::string dicomDir = "C:\\meus dicoms\\colon01";
+//const std::string dicomDir = "C:\\meus dicoms\\colon01";
 const int screenWidth = 800;
 const int screenHeight = 800;
 shared_ptr<Object3d> obj = nullptr;
